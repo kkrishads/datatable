@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Script Tutorials" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>DataTables - Data from Ajax, Edit in Place | Script Tutorials</title>
+
+    <link href="css/jquery.dataTables.css" rel="stylesheet" type="text/css" />
+    <link href="css/styles.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <header>
+        <h2>Back to '<a href="http://www.script-tutorials.com/datatables-data-from-ajax-edit-in-place/">DataTables - Data from Ajax, Edit in Place</a>' tutorial</h2>
+    </header>
+
+    <div class="table">
+        <h2>'mobile_list' table</h2>
+        <table cellpadding="0" cellspacing="0" border="0" class="display" id="mobile_list" style="width:95%;margin:0 auto" width="100%">
+            <thead><th title="company">company</th><th title="model">model</th><th title="price">price</th><th title="Status">image</th><th title="Role">summary</th><th title="Registration date">spec_status</th></thead>
+            <tbody><tr><td colspan="6" class="dataTables_empty">Downloading data about the users from the server</td></tr></tbody>
+            <tfoot><th title="company">company</th><th title="model">model</th><th title="price">price</th><th title="Status">image</th><th title="Role">summary</th><th title="Registration date">spec_status</th></tfoot>
+        </table>
+        <div style="clear:both"></div><br /><hr />
+        <button id="btnDeleteMemRow">Delete record</button>
+    </div>
+
+  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="js/jquery.dataTables.min.js"></script>
+  <script src="js/jquery.dataTables.editable.js"></script>
+  <script src="js/jquery.jeditable.js"></script>
+  <script src="js/jquery.validate.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
