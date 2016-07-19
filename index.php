@@ -111,7 +111,7 @@ var element3 = document.createElement("input");
 	     <td class="editable-col" contenteditable="true" col-index='0' id="<?php echo $id;?>" onKeyUp="showAutoComplete(this);" oldVal ="<?php echo $res['company'];?>"><?php echo $res['company'];?></td>
          <td class="editable-col" contenteditable="true" col-index='1' oldVal ="<?php echo $res['model'];?>"><?php echo $res['model'];?></td>
          <td class="editable-col" contenteditable="true" col-index='2' oldVal ="<?php echo $res['price'];?>"><?php echo $res['price'];?></td>
-		   <td><a href="delete.php?id=<?php echo $id;?>">Delete</a></td>
+		   <td><input type="button" onClick="deleteData(this,'<?php echo $id;?>','mobile_list');" value="Delete"/></td>
       </tr>
 	  <?php endforeach;?>
    </tbody>
@@ -175,18 +175,36 @@ function saveNewRow(row) {
     return data;
 }
 
+function deleteData(row,id,tablename){
+	data = {};
+	
+		data['id'] = id;
+		data['tablename'] =tablename;
+	
+
+		$.ajax({   
+				  
+					type: "POST",  
+					url: "data_delete.php",  
+					cache:false,  
+					data: data,
+					dataType: "json",				
+					success: function(response)  
+					{   
+						//$("#loading").hide();
+						if(!response.error) {
+							$("#msg").removeClass('alert-danger');
+							$("#msg").addClass('alert-success').html(response.msg);
+							deleteNewRow(row);	
+						} else {
+							$("#msg").removeClass('alert-success');
+							$("#msg").addClass('alert-danger').html(response.msg);
+						}
+					}   
+				});
+}
+
 function showAutoComplete(raw){
-	 /* var availableTutorials = [
-               "ActionScript",
-               "Boostrap",
-               "C",
-               "C++",
-            ];
-           
-	 $( "#"+raw.id ).autocomplete({
-               source: availableTutorials,
-               autoFocus:true
-            });*/
 			
 			$(function() {
     $("#"+raw.id ).autocomplete({
@@ -219,98 +237,7 @@ function showAutoComplete(raw){
 }
 
 $(document).ready(function(){
-	
-	
-	 $(function() {
-    var availableTags = [
-      "ActionScript",
-      "AppleScript",
-      "Asp",
-      "BASIC",
-      "C",
-      "C++",
-      "Clojure",
-      "COBOL",
-      "ColdFusion",
-      "Erlang",
-      "Fortran",
-      "Groovy",
-      "Haskell",
-      "Java",
-      "JavaScript",
-      "Lisp",
-      "Perl",
-      "PHP",
-      "Python",
-      "Ruby",
-      "Scala",
-      "Scheme"
-    ];
-    
-      
-      function placeCaretAtEnd(el) {
-    el.focus();
-    if (typeof window.getSelection != "undefined"
-            && typeof document.createRange != "undefined") {
-        var range = document.createRange();
-        range.selectNodeContents(el);
-        range.collapse(false);
-        var sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
-    } else if (typeof document.body.createTextRange != "undefined") {
-        var textRange = document.body.createTextRange();
-        textRange.moveToElementText(el);
-        textRange.collapse(false);
-        textRange.select();
-    }
-}
-      
-      
-      function split( val ) {
-      return val.split( /,\s*/ );
-    }
-    function extractLast( term ) {
-      return split( term ).pop();
-    }
- 
-    $( "#tags" )
-      // don't navigate away from the field on tab when selecting an item
-      .bind( "keydown", function( event ) {
-        if ( event.keyCode === $.ui.keyCode.TAB &&
-            $( this ).data( "ui-autocomplete" ).menu.active ) {
-          event.preventDefault();
-        }
-      })
-      .autocomplete({
-        minLength: 0,
-        source: function( request, response ) {
-          // delegate back to autocomplete, but extract the last term
-          response( $.ui.autocomplete.filter(
-            availableTags, extractLast( request.term ) ) );
-        },
-        focus: function() {
-          // prevent value inserted on focus
-          return false;
-        },
-        
-          select: function (event, ui) {
-           
-                var value = $(this).html();
-                var terms = split(value);
-                terms.pop();
-                terms.push(ui.item.value);
-                $(this).html(terms+", ");
-                placeCaretAtEnd(this);
-          
-            return false;
-        }
-          
-          
-          
-      });
-  });
-	
+
 	
 	$('td.editable-col').on('focusout', function() {
 		data = {};
