@@ -10,6 +10,21 @@ $queryRecords = mysqli_query($conn, $sql) or die("error to fetch employees data"
 <meta charset="UTF-8">
 <script type="text/javascript" src="jquery-1.11.1.min.js"></script>
 <link rel="stylesheet" type="text/css" href="bootstrap.min.css"/>
+ <link href="jquery-ui.css" rel="stylesheet">
+      <script src="jquery-1.10.2.js"></script>
+      <script src="jquery-ui.js"></script>
+	  <!-- Javascript -->
+      <script>
+         $(function() {
+            var availableTutorials = [
+               "ActionScript",
+               "Boostrap",
+               "C",
+               "C++",
+            ];
+           
+         });
+      </script>
 <title>phpflow.com : Simple Example of In-line Editing with HTML5,PHP and MySQL</title>
 </head>
 <script type="text/javascript">
@@ -85,12 +100,15 @@ var element3 = document.createElement("input");
       </tr>
    </thead>
    <tbody id="_editable_table">
+   
+
+   
       <?php foreach($queryRecords as $res) :?>
 	  <?php
 	  $id= $res['Id'];
 	  ?>
       <tr data-row-id="<?php echo $res['Id'];?>">
-	     <td class="editable-col" contenteditable="true" col-index='0' oldVal ="<?php echo $res['company'];?>"><?php echo $res['company'];?></td>
+	     <td class="editable-col" contenteditable="true" col-index='0' id="<?php echo $id;?>" onKeyUp="showAutoComplete(this);" oldVal ="<?php echo $res['company'];?>"><?php echo $res['company'];?></td>
          <td class="editable-col" contenteditable="true" col-index='1' oldVal ="<?php echo $res['model'];?>"><?php echo $res['model'];?></td>
          <td class="editable-col" contenteditable="true" col-index='2' oldVal ="<?php echo $res['price'];?>"><?php echo $res['price'];?></td>
 		   <td><a href="delete.php?id=<?php echo $id;?>">Delete</a></td>
@@ -98,6 +116,10 @@ var element3 = document.createElement("input");
 	  <?php endforeach;?>
    </tbody>
 </table>
+<div  class="taginput" contenteditable="true" tabindex="1" style="min-height: 25px;
+    width: 60%;
+    background:lightyellow;
+    box-shadow: 1px 1px 2px 2px darkgrey;"></div>
 </div>
 </body>
 </html>
@@ -153,7 +175,142 @@ function saveNewRow(row) {
     return data;
 }
 
+function showAutoComplete(raw){
+	 /* var availableTutorials = [
+               "ActionScript",
+               "Boostrap",
+               "C",
+               "C++",
+            ];
+           
+	 $( "#"+raw.id ).autocomplete({
+               source: availableTutorials,
+               autoFocus:true
+            });*/
+			
+			$(function() {
+    $("#"+raw.id ).autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "http://api.stackexchange.com/2.1/users",
+                data: {
+                    pagesize: 10,
+                    order: 'desc',
+                    sort: 'reputation',
+                    site: 'stackoverflow',
+                    inname: request.term
+                },
+                dataType: 'jsonp'
+            }).done(function(data) {
+                if (data.items) {
+                    response($.map(data.items, function(item) {
+                        return item.display_name;
+                    }));
+                } else {
+                    response([]);
+                }
+            });
+        },
+        delay: 100,
+        minLength: 0
+    });
+});
+			
+}
+
 $(document).ready(function(){
+	
+	
+	 $(function() {
+    var availableTags = [
+      "ActionScript",
+      "AppleScript",
+      "Asp",
+      "BASIC",
+      "C",
+      "C++",
+      "Clojure",
+      "COBOL",
+      "ColdFusion",
+      "Erlang",
+      "Fortran",
+      "Groovy",
+      "Haskell",
+      "Java",
+      "JavaScript",
+      "Lisp",
+      "Perl",
+      "PHP",
+      "Python",
+      "Ruby",
+      "Scala",
+      "Scheme"
+    ];
+    
+      
+      function placeCaretAtEnd(el) {
+    el.focus();
+    if (typeof window.getSelection != "undefined"
+            && typeof document.createRange != "undefined") {
+        var range = document.createRange();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    } else if (typeof document.body.createTextRange != "undefined") {
+        var textRange = document.body.createTextRange();
+        textRange.moveToElementText(el);
+        textRange.collapse(false);
+        textRange.select();
+    }
+}
+      
+      
+      function split( val ) {
+      return val.split( /,\s*/ );
+    }
+    function extractLast( term ) {
+      return split( term ).pop();
+    }
+ 
+    $( "#tags" )
+      // don't navigate away from the field on tab when selecting an item
+      .bind( "keydown", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).data( "ui-autocomplete" ).menu.active ) {
+          event.preventDefault();
+        }
+      })
+      .autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+          // delegate back to autocomplete, but extract the last term
+          response( $.ui.autocomplete.filter(
+            availableTags, extractLast( request.term ) ) );
+        },
+        focus: function() {
+          // prevent value inserted on focus
+          return false;
+        },
+        
+          select: function (event, ui) {
+           
+                var value = $(this).html();
+                var terms = split(value);
+                terms.pop();
+                terms.push(ui.item.value);
+                $(this).html(terms+", ");
+                placeCaretAtEnd(this);
+          
+            return false;
+        }
+          
+          
+          
+      });
+  });
+	
 	
 	$('td.editable-col').on('focusout', function() {
 		data = {};
